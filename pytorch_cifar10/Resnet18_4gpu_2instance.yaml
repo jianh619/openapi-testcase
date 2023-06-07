@@ -1,0 +1,37 @@
+protocolVersion: 2
+name: Resnet18_4gpu_c87bae6e
+type: job
+jobRetryCount: 0
+prerequisites:
+  - type: dockerimage
+    uri: 'jianh618/openpai:python_3.6-pytorch_1.2.0-gpu-jian'
+    name: docker_image_0
+taskRoles:
+  taskrole:
+    instances: 2
+    completion:
+      minFailedInstances: 1
+      minSucceededInstances: -1
+    taskRetryCount: 0
+    dockerImage: docker_image_0
+    resourcePerInstance:
+      gpu: 4
+      cpu: 28
+      memoryMB: 126964
+    commands:
+      - cd resnet
+      - >-
+        python cifar.py --gpuid 0,1,2,3 --arch ResNet18 --epoch 1 --batchsize
+        256
+defaults:
+  virtualCluster: default
+extras:
+  com.microsoft.pai.runtimeplugin:
+    - plugin: ssh
+      parameters:
+        jobssh: true
+  hivedScheduler:
+    taskRoles:
+      taskrole:
+        skuNum: 4
+        skuType: gpu-machine
