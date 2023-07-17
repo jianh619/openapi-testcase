@@ -21,7 +21,7 @@ taskRoles:
     commands:
       - cd resnet
       - >-
-        python cifar.py --gpuid 0,1,2,3 --arch ResNet18 --epoch 1 --batchsize
+        python cifar.py --gpuid 0,1,2,3 --arch ResNet18 --epoch 10 --batchsize
         256
 defaults:
   virtualCluster: default

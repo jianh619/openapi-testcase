@@ -23,12 +23,11 @@ taskRoles:
       - cd /root/apex
       - python setup.py install
       - cd /root
-      - >-
-        wget
-        http://117.89.185.31:8989/openpai-testcase/models/MNIST/MNIST-DDP-nccl.py
+      - cp /mnt/pai-claim/MNIST-zhouw25/MNIST-DDP-nccl.py .
+      - cp -r /mnt/pai-claim/MNIST-zhouw25/data .
       - >-
         export NCCL_SOCKET_IFNAME=eth0 && python MNIST-DDP-nccl.py -n 2 -g 2
-        --epochs 10 --master-ip 192.168.3.55 --master-port 10717
+        --epochs 10 --master-ip 192.168.3.55 --master-port 10718
 defaults:
   virtualCluster: default
 extras:
@@ -36,6 +35,10 @@ extras:
     - plugin: ssh
       parameters:
         jobssh: true
+    - plugin: teamwise_storage
+      parameters:
+        storageConfigNames:
+          - pai-claim
   hivedScheduler:
     taskRoles:
       taskrole:

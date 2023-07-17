@@ -1,0 +1,47 @@
+protocolVersion: 2
+name: minist-data-preload
+type: job
+jobRetryCount: 0
+prerequisites:
+  - type: dockerimage
+    uri: 'openpai/standard:python_3.6-tensorflow_1.15.0-gpu'
+    name: docker_image0
+taskRoles:
+  taskrole:
+    instances: 1
+    completion:
+      minFailedInstances: 1
+    taskRetryCount: 0
+    dockerImage: docker_image0
+    resourcePerInstance:
+      gpu: 1
+      cpu: 7
+      memoryMB: 31741
+    commands:
+      - cp -r /mnt/pai-claim/minist-jian /root/
+      - cd minist-jian
+      - >-
+        python minist_tensorboard.py --data_dir ./data --log_dir
+        /mnt/tensorboard
+      - sleep 30m
+defaults:
+  virtualCluster: default
+extras:
+  com.microsoft.pai.runtimeplugin:
+    - plugin: ssh
+      parameters:
+        jobssh: true
+    - plugin: teamwise_storage
+      parameters:
+        storageConfigNames:
+          - pai-claim
+    - plugin: tensorboard
+      parameters:
+        port: 10330
+        logdir:
+          path: /mnt/tensorboard
+  hivedScheduler:
+    taskRoles:
+      taskrole:
+        skuNum: 1
+        skuType: gpu-machine
